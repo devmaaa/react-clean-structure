@@ -1,0 +1,21 @@
+{
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "printWidth": 80,
+    "tabWidth": 2,
+    "useTabs": false,
+    "jsxSingleQuote": false,
+    "arrowParens": "always",
+    "endOfLine": "lf",
+    "importOrder": [
+      "^react(.*)$",
+      "<THIRD_PARTY_MODULES>",
+      "^@app/(.*)$",
+      "^@entities/(.*)$",
+      "^@images/(.*)$",
+      "^[./]"
+    ],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true
+  }
