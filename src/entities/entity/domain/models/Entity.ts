@@ -1,4 +1,4 @@
-interface Entity {
+export interface Entity {
   id: string;
   name: string;
 }

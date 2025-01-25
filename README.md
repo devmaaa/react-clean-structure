@@ -1,52 +1,122 @@
-# React + TypeScript + Vite
+# Clean Architecture for React Projects
 
 ![Alt text](public/architecture.png "a title")
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Core Principles
 
-Currently, two official plugins are available:
+### Layer Separation
+- **App**: App entry point , config , providers , routers etc
+- **Entities**: Core business logic and domain-specific features
+- **Shared**: Common utilities, types, and services
+- **Pages**: Route-based components and layouts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Import Rules
 
-## Expanding the ESLint configuration
+#### App Layer
+- Can import from:
+    - Shared layer
+    - Pages layer
+- Cannot import from:
+    - Entities
+#### Entity Layer
+- Can import from:
+    - Other entities (only through their public API)
+    - Shared layer
+    - App layer
+- Cannot import from:
+    - Pages layer
+    - Internal modules of other entities
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+#### Page Layer
+- Can import from:
+    - Any layer
+- Should compose features from entities
 
-- Configure the top-level `parserOptions` property like this:
+#### Shared Layer
+- Can import from:
+    - Only within shared layer
+    - App layer
+- Cannot import from:
+    - Entities
+    - Pages
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+
+
+### Entity Structure
+```
+entities/
+└── entity-name/
+    ├── components/     # UI Components
+    ├── domain/        # Business Logic
+    │   ├── services/
+    │   ├── stores/
+    │   └── models/
+    ├── lib/          # Entity-specific utilities
+    └── index.ts      # Public API
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### Public API Guidelines
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Each entity should expose its public interface through `index.ts`:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```typescript
+// entities/entity-name/index.ts
+// Export only what should be available to other entities
+export * from './components/PublicComponent';
+export * from './domain/models/types';
+export * from './domain/stores/EntityStore';
+// DO NOT export internal utilities or implementation details
+```
+
+## Best Practices
+
+### 1. Entity Independence
+- Each entity should be self-contained
+- Minimize dependencies between entities
+- Use shared layer for common functionality
+
+### 2. Import Standards
+- Always use absolute imports with aliases
+- Import only through public API
+- Follow consistent import order
+
+### 3. Component Sharing
+- Keep shared components in UI layer
+- Entity-specific components stay in entity
+- Use composition over direct imports
+
+### 4. Store Management
+- Each entity manages its own state
+- Use stores for complex state
+- Share state through public API
+
+## Examples
+
+### ✅ Correct Usage
+
+```typescript
+// Good - Importing through public API
+import { EntityFeature } from '@/entities/entity-name';
+import { formatDate } from '@/shared/utils';
+import { Button } from '@/ui/components';
+
+// Good - Page composition
+import { EntityFeature } from '@/entities/entity-name';
+import { AnotherFeature } from '@/entities/another';
+
+// Good - Shared utility
+import { logger } from '@/shared/utils';
+```
+
+### ❌ Incorrect Usage
+
+```typescript
+// Bad - Importing internal entity modules
+import { SomeComponent } from '@/entities/entity-name/components';
+
+// Bad - Entity importing from pages
+import { PageComponent } from '@/pages/some-page';
+
+// Bad - Shared importing from entity
+import { EntityUtil } from '@/entities/entity-name';
 ```

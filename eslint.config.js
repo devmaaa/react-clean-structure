@@ -35,7 +35,7 @@ export default tseslint.config(
         {
           default: 'disallow',
           rules: [
-            { from: ['shared'], allow: [] },
+            { from: ['shared'], allow: [], message: '' },
             { from: ['entities'], allow: ['shared'] },
             { from: ['pages'], allow: ['entities', 'shared'] },
             { from: ['app'], allow: ['pages', 'entities', 'shared'] },
