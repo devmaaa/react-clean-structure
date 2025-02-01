@@ -2,6 +2,16 @@
 
 ![Alt text](public/architecture.png "a title")
 
+## Project Scale Considerations
+This architecture is optimized for medium to large-scale React applications where:
+
+Multiple teams need to work simultaneously
+The business domain is complex enough to benefit from clear boundaries
+The application requires scalable state management
+Clear separation of concerns is crucial for maintainability
+
+**For small single-page applications or simple projects, this architecture might introduce unnecessary complexity. In such cases, a simpler structure without strict layer separation might be more appropriate.**
+
 ## Core Principles
 
 ### Layer Separation
@@ -46,7 +56,7 @@
 ```
 entities/
 └── entity-name/
-    ├── components/     # UI Components
+    ├── ui/     # UI Components
     ├── domain/        # Business Logic
     │   ├── services/
     │   ├── stores/

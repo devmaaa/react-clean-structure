@@ -28,6 +28,8 @@
       "@/*": ["*"],
       "@app/*": ["app/*"],
       "@entities/*": ["entities/*"],
+      "@shared/*": ["shared/*"],
+      "@pages/*": ["shared/*"],
       "@images/*": ["app/assets/images/*"]
     }
   },
